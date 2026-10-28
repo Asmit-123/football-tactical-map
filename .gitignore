@@ -19,3 +19,6 @@ Thumbs.db
 
 # App output (generated at runtime)
 outputs/
+
+# Streamlit secrets (never commit)
+.streamlit/secrets.toml

@@ -1,13 +1,3 @@
----
-title: Football Tactical Map
-emoji: ⚽
-colorFrom: green
-colorTo: blue
-sdk: docker
-app_port: 7860
-pinned: false
----
-
 # Football Match Analysis with Tactical Map
 
 A web app that analyses football footage from a tactical camera and builds a live tactical map:
@@ -70,6 +60,11 @@ Manual checks: [docs/manual-test-checklist.md](docs/manual-test-checklist.md).
 ## Deploying
 
 The app needs a long-running Python server and PyTorch, so serverless platforms such as Vercel
-are not suitable. GitHub hosts the code and runs CI (`.github/workflows/ci.yml`); the app itself
-runs on a Hugging Face Docker Space using the `Dockerfile` in this repo. Free hosting is
-CPU-only, so use the *Process every Nth frame* setting to speed up processing.
+are not suitable. It is deployed on **Streamlit Community Cloud** straight from this repository:
+`requirements.txt` (CPU-only PyTorch), `packages.txt` (system libraries for OpenCV) and
+`.streamlit/config.toml` are the only deployment files. GitHub also runs CI
+(`.github/workflows/ci.yml`).
+
+Tips for the hosted demo: the free tier is a small shared CPU, so set *Process every Nth frame*
+to 3 or more, and use short clips. The app goes to sleep after 12 hours without visitors and
+takes a minute to wake up.

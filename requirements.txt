@@ -1,12 +1,15 @@
-# Same stack as the original project, now complete and pinned.
-# NOTE: for a CPU-only host (e.g. Hugging Face Spaces) the plain torch wheel on Linux
-# pulls multi-GB CUDA libraries. Phase 4 adds a deploy-specific CPU setup.
-   torch
-   torchvision
-   ultralytics
-   numpy
-   pillow
-   pyyaml
-   scikit-image
-   streamlit
-   streamlit-image-coordinates
+# CPU-only PyTorch wheels (the default Linux wheel drags in gigabytes of CUDA libraries).
+# Harmless on Windows/macOS.
+--extra-index-url https://download.pytorch.org/whl/cpu
+
+# Pinned to the versions the app was developed and tested with.
+torch==2.14.1
+torchvision
+ultralytics==8.4.191
+streamlit==1.66.1
+
+numpy
+pillow
+pyyaml
+scikit-image
+streamlit-image-coordinates

@@ -1,0 +1,6 @@
+[server]
+# Uploaded videos are held in memory; keep the cap low for a hosted demo (raise it locally).
+maxUploadSize = 50
+
+[browser]
+gatherUsageStats = false
