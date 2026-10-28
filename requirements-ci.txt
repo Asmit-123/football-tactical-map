@@ -1,0 +1,8 @@
+# What the fast tests need (no torch / ultralytics / streamlit), so CI installs in seconds.
+numpy
+opencv-python-headless
+pillow
+pyyaml
+scikit-image
+pytest
+ruff

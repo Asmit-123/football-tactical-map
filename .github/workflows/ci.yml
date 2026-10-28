@@ -1,0 +1,26 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.14"
+
+      - name: Install test dependencies
+        run: |
+          pip install -r requirements-ci.txt
+          pip install -e . --no-deps
+
+      - name: Lint
+        run: ruff check .
+
+      - name: Fast tests (the slow app test needs weights and is skipped here)
+        run: pytest -m "not slow"

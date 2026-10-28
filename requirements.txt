@@ -1,0 +1,12 @@
+# Same stack as the original project, now complete and pinned.
+# NOTE: for a CPU-only host (e.g. Hugging Face Spaces) the plain torch wheel on Linux
+# pulls multi-GB CUDA libraries. Phase 4 adds a deploy-specific CPU setup.
+   torch
+   torchvision
+   ultralytics
+   numpy
+   pillow
+   pyyaml
+   scikit-image
+   streamlit
+   streamlit-image-coordinates
