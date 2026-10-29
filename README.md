@@ -116,6 +116,12 @@ This is a rebuild of an earlier prototype with the same behaviour and a cleaner 
 - The output video uses the MPEG-4 codec, which some browsers can't play. Open the downloaded
   file in VLC or a media player.
 
+## Application Workflow
+
+The journey of the input video and different functionalities are illustrated in the workflow diagram below.
+
+![workflow diagram](https://github.com/Hmzbo/Football-Analytics-with-Deep-Learning-and-Computer-Vision/assets/62519374/8a934460-5f7f-4170-a2b2-d89c77fce2fe)
+
 ## Demo Input
 
 <p><img height="400" width="1000" src="demo_input.gif" alt="demo"></p>
