@@ -115,3 +115,12 @@ This is a rebuild of an earlier prototype with the same behaviour and a cleaner 
 - The hosted demo runs on a small shared CPU, so processing is slow compared with a GPU.
 - The output video uses the MPEG-4 codec, which some browsers can't play. Open the downloaded
   file in VLC or a media player.
+
+## Demo Input
+
+<p><img height="400" width="1000" src="demo_input.gif" alt="demo"></p>
+
+
+## Demo Output
+
+<p><img height="400" width="1000" src="demo_result.gif" alt="demo"></p>
