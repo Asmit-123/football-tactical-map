@@ -1,22 +1,63 @@
 # Football Match Analysis with Tactical Map
 
-A web app that analyses football footage from a tactical camera and builds a live tactical map:
+[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://football-tactical-map-analysis.streamlit.app/)
+[![CI](https://github.com/Asmit-123/football-tactical-map/actions/workflows/ci.yml/badge.svg)](https://github.com/Asmit-123/football-tactical-map/actions/workflows/ci.yml)
+![Python](https://img.shields.io/badge/python-3.10%2B-blue)
 
-1. Detects players, referees and the ball (YOLOv8).
-2. Predicts each player's team from the colours of the jersey.
-3. Maps players and the ball onto a 2D pitch using a homography estimated from detected pitch keypoints.
-4. Tracks the ball and draws its recent path on the map.
+**Live demo:** https://football-tactical-map-analysis.streamlit.app/
 
-> Works only with tactical camera footage (wide view of the whole pitch).
+> The free host puts the app to sleep when nobody has visited for a while, so the first load can take about a minute.
 
-This is a rebuild of the original project with a cleaner structure, a Streamlit-free processing
-core, tests and a deployable setup. The prototype behaves the same as before.
+A web app that analyses football footage from a tactical camera. It detects the players, referees
+and ball, works out which team each player belongs to, and projects everyone onto a 2D tactical
+map of the pitch, frame by frame.
 
-## Quick start
+> Works only with tactical camera footage (a wide view of the whole pitch).
 
-Requires Python 3.14 (any version your PyTorch build supports should work).
+## Features
+
+- Detection of players, referees and the ball with two YOLOv8 models.
+- Team prediction from the colour of each player's jersey, with a colour picker to set up the kits.
+- Players and ball placed on a tactical map using a homography estimated from detected pitch keypoints.
+- Ball tracking with a short path drawn on the map.
+- Adjustable hyperparameters and annotation options, two built-in demo videos, and video upload.
+- Downloadable annotated output video.
+
+## How it works
+
+1. **Detection.** A YOLOv8 model finds players, referees and the ball. A second YOLOv8 model finds
+   28 landmarks on the pitch (corners, penalty-box corners, centre circle and so on).
+2. **Homography.** The detected landmarks are matched with their known positions on a 2D pitch
+   image to compute the transformation from the video frame to the tactical map. It is only
+   recomputed when the landmarks have moved more than a set tolerance, which keeps the map steady.
+3. **Position on the map.** The bottom-centre of each player's box (the feet) and the centre of the
+   ball are transformed onto the tactical map.
+4. **Team prediction.** The torso area of each player's box is reduced to its dominant colours.
+   Each colour votes for the closest of four reference colours (player and goalkeeper kit of each
+   team) in L\*a\*b\* colour space, and the majority decides the team.
+5. **Ball tracking.** Recent ball positions are kept as a track, which is reset after too many
+   frames without the ball or when the ball jumps too far between detections.
+
+## Using the live demo
+
+1. Pick **Demo 1** or **Demo 2** in the sidebar, or upload your own tactical-camera clip.
+2. On the **Team Colors** tab, pick a frame where players of both teams are visible, then click a player to set each team's player and goalkeeper colours.
+3. On the **Model Hyperparameters & Detection** tab, set **Process every Nth frame** to 3 or more (the free host is a small shared CPU) and click **Start Detection**.
+4. When it finishes, use **Download result video**.
+
+## Tech stack
+
+Python, PyTorch, Ultralytics YOLOv8, OpenCV, scikit-image, NumPy, Streamlit, pytest, ruff,
+GitHub Actions, Git LFS, Streamlit Community Cloud.
+
+## Run locally
+
+Requires Python 3.10 or newer (developed on 3.14).
 
 ```bash
+git lfs install
+git clone https://github.com/Asmit-123/football-tactical-map.git
+cd football-tactical-map
 python -m venv .venv
 .venv\Scripts\activate          # Windows   (macOS/Linux: source .venv/bin/activate)
 pip install -r requirements-dev.txt
@@ -24,8 +65,8 @@ pip install -e .
 streamlit run app.py
 ```
 
-Before the first run, place the model weights in `models/` and the demo videos in
-`assets/demo/` (see the README in each folder). `git lfs install` before cloning or adding them.
+The model weights (`models/`) and demo videos (`assets/demo/`) are stored with Git LFS, so run
+`git lfs install` before cloning.
 
 ## Project layout
 
@@ -47,7 +88,7 @@ tests/                      pytest suite
 docs/manual-test-checklist.md
 ```
 
-## Tests
+## Tests and CI
 
 ```bash
 pytest -m "not slow"     # fast unit tests, no models needed
@@ -55,16 +96,22 @@ pytest                   # also starts the whole app once (needs weights + demo 
 ruff check .             # lint
 ```
 
-Manual checks: [docs/manual-test-checklist.md](docs/manual-test-checklist.md).
+GitHub Actions runs the linter and the fast tests on every push. Manual checks are listed in
+[docs/manual-test-checklist.md](docs/manual-test-checklist.md).
 
-## Deploying
+## Engineering notes
 
-The app needs a long-running Python server and PyTorch, so serverless platforms such as Vercel
-are not suitable. It is deployed on **Streamlit Community Cloud** straight from this repository:
-`requirements.txt` (CPU-only PyTorch), `packages.txt` (system libraries for OpenCV) and
-`.streamlit/config.toml` are the only deployment files. GitHub also runs CI
-(`.github/workflows/ci.yml`).
+This is a rebuild of an earlier prototype with the same behaviour and a cleaner structure:
 
-Tips for the hosted demo: the free tier is a small shared CPU, so set *Process every Nth frame*
-to 3 or more, and use short clips. The app goes to sleep after 12 hours without visitors and
-takes a minute to wake up.
+- The processing core (`pipeline.py`) has no Streamlit code, so it can be tested and reused. Analysis and drawing are separate steps.
+- Homography, team prediction and ball tracking are small, separately tested modules.
+- 62 automated tests, with the YOLO models replaced by fakes so most tests run in seconds.
+- Fixed bugs from the prototype: the ball-track length cap never applied, the colour tab crashed with fewer than two players, the homography crashed when the first frame had too few keypoints, the saved video had its width and height swapped, uploads were rewritten to disk on every rerun, and file paths only worked on Windows.
+- Deployment uses CPU-only PyTorch and the weights are tracked with Git LFS.
+
+## Limitations
+
+- Needs tactical-camera footage; close-up broadcast shots won't produce a usable map.
+- The hosted demo runs on a small shared CPU, so processing is slow compared with a GPU.
+- The output video uses the MPEG-4 codec, which some browsers can't play. Open the downloaded
+  file in VLC or a media player.
