@@ -45,5 +45,15 @@ def run_detection(
             sink.close()
 
     st.toast("Detection Completed!")
-    if saved_to is not None:
-        st.success(f"Saved to {saved_to}")
+    if saved_to is not None and saved_to.is_file():
+        st.success("Detection finished. Your video is ready to download.")
+        st.download_button(
+            "Download result video",
+            data=saved_to.read_bytes(),
+            file_name=saved_to.name,
+            mime="video/mp4",
+            on_click="ignore",  # no rerun on click, so the output stays on screen
+        )
+        st.caption(
+            "If your browser can't play the downloaded file, open it in VLC or a media player."
+        )

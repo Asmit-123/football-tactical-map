@@ -30,7 +30,8 @@ def render_help_tab() -> None:
         6. Go to the "Model Hyperparameters & Detection" tab, adjust the hyperparameters and
            select the annotation options (the defaults are recommended).
         7. Run Detection!
-        8. If "Save output" was selected, the saved video can be found in the `outputs` folder.
+        8. If "Save output" is ticked, a "Download result video" button appears when detection ends
+           (locally the file is also kept in the `outputs` folder).
         """
     )
     st.write(f"Version {__version__}")

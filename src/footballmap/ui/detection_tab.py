@@ -60,7 +60,9 @@ def render_detection_tab(state: SidebarState) -> DetectionRequest:
             "the output looks choppier.",
         )
         st.markdown("---")
-        save_output = st.checkbox("Save output", value=False)
+        save_output = st.checkbox(
+            "Save output (adds a download button when detection ends)", value=True
+        )
         output_name = None
         if save_output:
             output_name = st.text_input(
